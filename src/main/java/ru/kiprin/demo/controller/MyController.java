@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import ru.kiprin.demo.exception.UnsupportedCodeException;
 import ru.kiprin.demo.exception.ValidationFailedException;
 import ru.kiprin.demo.model.Request;
 import ru.kiprin.demo.model.Response;
@@ -44,10 +45,19 @@ public class MyController {
 
         try {
             validationService.isValid(bindingResult);
+            
+            if ("123".equals(request.getUid())) {
+                throw new UnsupportedCodeException("uid равен 123");
+            }
         } catch (ValidationFailedException e) {
             response.setCode("failed");
             response.setErrorCode("ValidationException");
-            response.setErrorMessage("Ошибка валидации");
+            response.setErrorMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        } catch (UnsupportedCodeException e) {
+            response.setCode("failed");
+            response.setErrorCode("UnsupportedCodeException");
+            response.setErrorMessage(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             response.setCode("failed");
