@@ -3,3 +3,9 @@ spring:
     name: demo
 server:
   port: 8082
+logging:
+  level:
+    ru:
+      kiprin: DEBUG
+    org:
+      springframework: ERROR

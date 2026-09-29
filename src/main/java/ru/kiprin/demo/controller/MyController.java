@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import ru.kiprin.demo.exception.UnsupportedCodeException;
 import ru.kiprin.demo.exception.ValidationFailedException;
 import ru.kiprin.demo.model.Codes;
@@ -23,6 +24,7 @@ import ru.kiprin.demo.service.ModifyResponseService;
 import ru.kiprin.demo.service.ValidationService;
 import ru.kiprin.demo.util.DateTimeUtil;
 
+@Slf4j
 @RestController
 public class MyController {
 
@@ -40,6 +42,8 @@ public class MyController {
     @PostMapping(value = "/feedback")
     public ResponseEntity<Response> feedback(@Valid @RequestBody Request request,
             BindingResult bindingResult) {
+
+        log.info("request: {}", request);
 
         Response response = Response.builder()
                 .uid(request.getUid())
