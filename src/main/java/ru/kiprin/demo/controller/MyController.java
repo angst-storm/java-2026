@@ -43,7 +43,7 @@ public class MyController {
     public ResponseEntity<Response> feedback(@Valid @RequestBody Request request,
             BindingResult bindingResult) {
 
-        log.info("request: {}", request);
+        log.info("request [{}]: {}", request.getOperationUid(), request);
 
         Response response = Response.builder()
                 .uid(request.getUid())
@@ -53,27 +53,41 @@ public class MyController {
                 .errorCode(ErrorCodes.EMPTY)
                 .errorMessage(ErrorMessages.EMPTY)
                 .build();
+        log.info("response created [{}]: {}", response.getOperationUid(), response);
 
         try {
             validationService.isValid(bindingResult);
 
             if ("123".equals(request.getUid())) {
+                log.error("unsupported uid [{}]: uid=123", request.getOperationUid());
                 throw new UnsupportedCodeException("uid равен 123");
             }
         } catch (ValidationFailedException e) {
+            log.error("validation exception [{}]: {}", response.getOperationUid(), e.getMessage());
             response.setCode(Codes.FAILED);
             response.setErrorCode(ErrorCodes.VALIDATION_EXCEPTION);
             response.setErrorMessage(ErrorMessages.VALIDATION);
+            log.info("response modified [{}] (validation): code={}, errorCode={}, errorMessage={}",
+                    response.getOperationUid(), response.getCode(), response.getErrorCode(),
+                    response.getErrorMessage());
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } catch (UnsupportedCodeException e) {
+            log.error("unsupported exception [{}]: {}", response.getOperationUid(), e.getMessage());
             response.setCode(Codes.FAILED);
             response.setErrorCode(ErrorCodes.UNSUPPORTED_EXCEPTION);
             response.setErrorMessage(ErrorMessages.UNSUPPORTED);
+            log.info("response modified [{}] (unsupported): code={}, errorCode={}, errorMessage={}",
+                    response.getOperationUid(), response.getCode(), response.getErrorCode(),
+                    response.getErrorMessage());
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
+            log.error("unknown exception [{}]: {}", response.getOperationUid(), e.getMessage());
             response.setCode(Codes.FAILED);
             response.setErrorCode(ErrorCodes.UNKNOWN_EXCEPTION);
             response.setErrorMessage(ErrorMessages.UNKNOWN);
+            log.info("response modified [{}] (unknown): code={}, errorCode={}, errorMessage={}",
+                    response.getOperationUid(), response.getCode(), response.getErrorCode(),
+                    response.getErrorMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         modifyResponseService.modify(response);

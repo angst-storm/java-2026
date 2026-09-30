@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.kiprin.demo.exception.ValidationFailedException;
 
+@Slf4j
 @Service
 public class RequestValidationService implements ValidationService {
 
@@ -17,6 +19,7 @@ public class RequestValidationService implements ValidationService {
             String errorMessage = bindingResult.getFieldErrors().stream()
                     .map(FieldError::getDefaultMessage)
                     .collect(Collectors.joining(", "));
+            log.error("validation failed: {}", errorMessage);
             throw new ValidationFailedException(errorMessage);
         }
 

@@ -23,7 +23,7 @@ public class Request {
     @Size(max = 32, message = "operationUid должен содержать не более 32 символов")
     private String operationUid;
 
-    private String systemName;
+    private Systems systemName;
 
     @NotBlank(message = "systemTime не может быть пустым")
     private String systemTime;
