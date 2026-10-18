@@ -2,7 +2,6 @@ package ru.kiprin.demo.controller;
 
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import ru.kiprin.demo.exception.UnsupportedCodeException;
 import ru.kiprin.demo.model.Codes;
 import ru.kiprin.demo.model.ErrorCodes;
 import ru.kiprin.demo.model.ErrorMessages;
@@ -36,7 +34,6 @@ public class MyController {
     private final AnnualBonusService annualBonusService;
     private final ExceptionHandlerService exceptionHandlerService;
 
-    @Autowired
     public MyController(ValidationService validationService,
             @Qualifier("ModifySystemTimeResponseService") ModifyResponseService modifyResponseService,
             @Qualifier("ModifySourceRequestService") ModifyRequestService modifyRequestService,
@@ -57,23 +54,14 @@ public class MyController {
         log.info("request [{}]: {}", request.getOperationUid(), request);
 
         Response response = buildResponse(request);
-        log.info("response created [{}]: {}", response.getOperationUid(), response);
 
         try {
-            validationService.isValid(bindingResult);
-            checkUid(request);
+            validationService.isValid(bindingResult, request);
         } catch (Exception e) {
             return exceptionHandlerService.handle(response, e);
         }
 
-        response.setAnnualBonus(annualBonusService.calculate(
-                request.getPosition(),
-                request.getSalary(),
-                request.getBonus(),
-                request.getWorkDays()));
-        log.info("response enriched [{}]: annualBonus={}", response.getOperationUid(),
-                response.getAnnualBonus());
-
+        enrichResponse(request, response);
         modifyResponseService.modify(response);
         modifyRequestService.modify(request);
 
@@ -91,10 +79,13 @@ public class MyController {
                 .build();
     }
 
-    private void checkUid(Request request) throws UnsupportedCodeException {
-        if ("123".equals(request.getUid())) {
-            log.error("unsupported uid [{}]: uid=123", request.getOperationUid());
-            throw new UnsupportedCodeException("uid равен 123");
-        }
+    private void enrichResponse(Request request, Response response) {
+        response.setAnnualBonus(annualBonusService.calculate(
+                request.getPosition(),
+                request.getSalary(),
+                request.getBonus(),
+                request.getWorkDays()));
+        log.info("response enriched [{}]: annualBonus={}", response.getOperationUid(),
+                response.getAnnualBonus());
     }
 }
