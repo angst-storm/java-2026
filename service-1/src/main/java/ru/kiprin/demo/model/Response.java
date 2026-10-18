@@ -13,4 +13,5 @@ public class Response {
     private Codes code;
     private ErrorCodes errorCode;
     private ErrorMessages errorMessage;
+    private Double annualBonus;
 }

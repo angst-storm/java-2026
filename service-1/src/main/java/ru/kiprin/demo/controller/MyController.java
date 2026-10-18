@@ -20,6 +20,7 @@ import ru.kiprin.demo.model.ErrorCodes;
 import ru.kiprin.demo.model.ErrorMessages;
 import ru.kiprin.demo.model.Request;
 import ru.kiprin.demo.model.Response;
+import ru.kiprin.demo.service.AnnualBonusService;
 import ru.kiprin.demo.service.ModifyRequestService;
 import ru.kiprin.demo.service.ModifyResponseService;
 import ru.kiprin.demo.service.ValidationService;
@@ -35,13 +36,17 @@ public class MyController {
 
     private final ModifyRequestService modifyRequestService;
 
+    private final AnnualBonusService annualBonusService;
+
     @Autowired
     public MyController(ValidationService validationService,
             @Qualifier("ModifySystemTimeResponseService") ModifyResponseService modifyResponseService,
-            @Qualifier("ModifySourceRequestService") ModifyRequestService modifyRequestService) {
+            @Qualifier("ModifySourceRequestService") ModifyRequestService modifyRequestService,
+            AnnualBonusService annualBonusService) {
         this.validationService = validationService;
         this.modifyResponseService = modifyResponseService;
         this.modifyRequestService = modifyRequestService;
+        this.annualBonusService = annualBonusService;
     }
 
     @PostMapping(value = "/feedback")
@@ -96,6 +101,14 @@ public class MyController {
                     response.getErrorMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        response.setAnnualBonus(annualBonusService.calculate(
+                request.getPosition(),
+                request.getSalary(),
+                request.getBonus(),
+                request.getWorkDays()));
+        log.info("response enriched [{}]: annualBonus={}", response.getOperationUid(),
+                response.getAnnualBonus());
+
         modifyResponseService.modify(response);
         modifyRequestService.modify(request);
 

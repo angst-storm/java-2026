@@ -30,13 +30,21 @@ public class Request {
 
     private String source;
 
+    private Positions position;
+
+    private Double salary;
+
+    private Double bonus;
+
+    private Integer workDays;
+
     @Min(value = 1, message = "communicationId должен быть не меньше 1")
     @Max(value = 100000, message = "communicationId должен быть не больше 100000")
-    private int communicationId;
+    private Integer communicationId;
 
-    private int templateId;
-    private int productCode;
-    private int smsCode;
+    private Integer templateId;
+    private Integer productCode;
+    private Integer smsCode;
 
     @Override
     public String toString() {
@@ -46,6 +54,10 @@ public class Request {
                 ", systemName='" + systemName + '\'' +
                 ", systemTime='" + systemTime + '\'' +
                 ", source='" + source + '\'' +
+                ", position=" + position +
+                ", salary=" + salary +
+                ", bonus=" + bonus +
+                ", workDays=" + workDays +
                 ", communicationId=" + communicationId +
                 ", templateId=" + templateId +
                 ", productCode=" + productCode +
