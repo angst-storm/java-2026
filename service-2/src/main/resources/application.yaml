@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: service-2
+server:
+  port: 8084
+logging:
+  level:
+    ru:
+      kiprin: DEBUG
+    org:
+      springframework: ERROR

@@ -1,6 +1,6 @@
 spring:
   application:
-    name: demo
+    name: service-1
 server:
   port: 8082
 logging:
