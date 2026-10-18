@@ -20,6 +20,7 @@ import ru.kiprin.demo.model.ErrorCodes;
 import ru.kiprin.demo.model.ErrorMessages;
 import ru.kiprin.demo.model.Request;
 import ru.kiprin.demo.model.Response;
+import ru.kiprin.demo.service.ModifyRequestService;
 import ru.kiprin.demo.service.ModifyResponseService;
 import ru.kiprin.demo.service.ValidationService;
 import ru.kiprin.demo.util.DateTimeUtil;
@@ -32,11 +33,15 @@ public class MyController {
 
     private final ModifyResponseService modifyResponseService;
 
+    private final ModifyRequestService modifyRequestService;
+
     @Autowired
     public MyController(ValidationService validationService,
-            @Qualifier("ModifySystemTimeResponseService") ModifyResponseService modifyResponseService) {
+            @Qualifier("ModifySystemTimeResponseService") ModifyResponseService modifyResponseService,
+            ModifyRequestService modifyRequestService) {
         this.validationService = validationService;
         this.modifyResponseService = modifyResponseService;
+        this.modifyRequestService = modifyRequestService;
     }
 
     @PostMapping(value = "/feedback")
@@ -91,6 +96,7 @@ public class MyController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         modifyResponseService.modify(response);
+        modifyRequestService.modify(request);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
