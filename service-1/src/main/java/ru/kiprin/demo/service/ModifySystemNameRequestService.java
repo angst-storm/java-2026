@@ -1,5 +1,6 @@
 package ru.kiprin.demo.service;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -10,6 +11,7 @@ import ru.kiprin.demo.model.Request;
 import ru.kiprin.demo.model.Systems;
 
 @Service
+@Qualifier("ModifySystemNameRequestService")
 public class ModifySystemNameRequestService implements ModifyRequestService {
 
     @Override
