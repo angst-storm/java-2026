@@ -1,5 +1,6 @@
 package ru.kiprin.demo.controller;
 
+import java.text.ParseException;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,7 @@ public class MyController {
             BindingResult bindingResult) {
 
         log.info("request [{}]: {}", request.getOperationUid(), request);
+        logRequestTimeDifference(request);
 
         Response response = Response.builder()
                 .uid(request.getUid())
@@ -93,5 +95,17 @@ public class MyController {
         modifyResponseService.modify(response);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    private void logRequestTimeDifference(Request request) {
+        try {
+            Date service1ReceivedAt = DateTimeUtil.getCustomFormat().parse(request.getSystemTime());
+            long differenceMs = new Date().getTime() - service1ReceivedAt.getTime();
+            log.info("время от получения Request сервисом 1 до получения сервисом 2: {} мс",
+                    differenceMs);
+        } catch (ParseException e) {
+            log.error("не удалось разобрать systemTime [{}]: {}", request.getOperationUid(),
+                    request.getSystemTime());
+        }
     }
 }

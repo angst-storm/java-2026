@@ -48,6 +48,7 @@ public class MyController {
     public ResponseEntity<Response> feedback(@Valid @RequestBody Request request,
             BindingResult bindingResult) {
 
+        request.setSystemTime(DateTimeUtil.getCustomFormat().format(new Date()));
         log.info("request [{}]: {}", request.getOperationUid(), request);
 
         Response response = Response.builder()
